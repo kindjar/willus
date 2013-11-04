@@ -8,19 +8,15 @@ import (
     "strings"
     "strconv"
     "net/http"
-    forecast "github.com/mlbright/forecast/v2"
+    // "./errors"
+    // "./config"
+    // forecast "github.com/mlbright/forecast/v2"
+    "html/template"
 )
 
+const DefaultConfigPath = "config/willus.cfg"
 const DefaultApiKeyPath = "config/secrets/api_key.txt"
 const DefaultLocationPath = "config/location.txt"
-
-type WillusError struct {
-    Message string
-}
-
-func (e WillusError) Error() (error string) {
-    return e.Message
-}
 
 func handler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
@@ -52,56 +48,48 @@ func apiKeyFromPath(path string) (key string, err error) {
     return strings.TrimSpace(key), nil
 }
 
-func getLocationFromPath(path string) (lat float64, long float64, err error) {
-    locationbytes, err := ioutil.ReadFile(path)
-    if err != nil {
-        return 0, 0, &WillusError{fmt.Sprintf(
-                "Unable to read location from path %s: %s", path, err.Error())}
-    }
-    location := strings.Split(string(locationbytes), ",")
-    lat, err = strconv.ParseFloat(strings.TrimSpace(location[0]), 64)
-    if err != nil {
-        return 0, 0, &WillusError{fmt.Sprintf(
-                "Unable to read latitude from location %s (path: %s): %s", 
-                        string(locationbytes), path, err.Error())}
-    }
-    long, err = strconv.ParseFloat(strings.TrimSpace(location[1]), 64)
-    if err != nil {
-        return 0, 0, &WillusError{fmt.Sprintf(
-                "Unable to read longitude from location %s (path: %s): %s", 
-                        string(locationbytes), path, err.Error())}
-    }
-    return lat, long, nil
+func loadTemplate(tmplName string) (tmpl *template.Template) {
+    tmpl, _ = template.ParseFiles(tmplName)
+    return
 }
 
 func main() {
-    var err error
-    key, err := apiKeyFromEnvOrPath(DefaultApiKeyPath)
+    config, err := loadConfig(DefaultConfigPath)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    apiKeyPath := config.ApiKey.File
+    if apiKeyPath == "" {
+        apiKeyPath = DefaultApiKeyPath
+    }
+    key, err := apiKeyFromEnvOrPath(apiKeyPath)
     if err != nil {
         log.Fatal(err)
     }
     fmt.Println("key: ", key)
-    lat, long, err := getLocationFromPath(DefaultLocationPath)
-    if err != nil {
-        log.Fatal(err)
-    }
+
+    lat := config.Location.Lat
+    long := config.Location.Long
     fmt.Printf("lat: %f long: %f\n", lat, long)
 
-    forecast, err := forecast.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
-            strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
-    if err != nil {
-        log.Fatal(err)
-    }
+    // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
-    fmt.Println(forecast.Timezone)
-    fmt.Println(forecast.Currently.Summary)
-    fmt.Println(forecast.Currently.Humidity)
-    fmt.Println(forecast.Currently.Temperature)
-    fmt.Println(forecast.Flags.Units)
-    fmt.Println(forecast.Currently.WindSpeed)
+    // forecast, err := forecast.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
+    //         strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
+    // if err != nil {
+    //     log.Fatal(err)
+    // }
+
+    // fmt.Println("Timezone", forecast.Timezone)
+    // fmt.Println("Summary", forecast.Currently.Summary)
+    // fmt.Println("Humidity", forecast.Currently.Humidity)
+    // fmt.Println("Temperature", forecast.Currently.Temperature)
+    // // fmt.Println(forecast.Flags.Units)
+    // fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
 }
 
 // func main() {
-//     http.HandleFunc("/", handler)
+//     http.HandleFunc("/forecast/", handler)
 //     http.ListenAndServe(":8080", nil)
 // }

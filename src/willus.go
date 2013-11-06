@@ -7,6 +7,7 @@ import (
     "log"
     "strings"
     "net/http"
+    "encoding/json"
     // forecast "github.com/mlbright/forecast/v2"
     "html/template"
 )
@@ -65,6 +66,10 @@ func main() {
     cacheDir := config.Cache.Directory
     os.MkdirAll(cacheDir, 0700)
     fmt.Printf("cacheDir: %s \n", cacheDir)
+
+    jsonBytes, _ := json.MarshalIndent(config, "", "  ")
+    fmt.Println(string(jsonBytes))
+
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
     // forecast, err := forecast.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 

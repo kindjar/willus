@@ -16,6 +16,9 @@ type Config struct {
     Templates struct {
         Directory string
     }
+    Cache struct {
+        Directory string
+    }
 }
 
 func loadConfig(path string) (cfg Config, err error) {

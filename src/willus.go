@@ -6,17 +6,12 @@ import (
     "io/ioutil"
     "log"
     "strings"
-    "strconv"
     "net/http"
-    // "./errors"
-    // "./config"
     // forecast "github.com/mlbright/forecast/v2"
     "html/template"
 )
 
 const DefaultConfigPath = "config/willus.cfg"
-const DefaultApiKeyPath = "config/secrets/api_key.txt"
-const DefaultLocationPath = "config/location.txt"
 
 func handler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
@@ -36,9 +31,6 @@ func apiKeyFromEnvironment() (key string) {
 }
 
 func apiKeyFromPath(path string) (key string, err error) {
-    if path == "" {
-        path = DefaultApiKeyPath
-    }
     keybytes, err := ioutil.ReadFile(path)
     if err != nil {
         return "", &WillusError{fmt.Sprintf(
@@ -60,9 +52,6 @@ func main() {
     }
 
     apiKeyPath := config.ApiKey.File
-    if apiKeyPath == "" {
-        apiKeyPath = DefaultApiKeyPath
-    }
     key, err := apiKeyFromEnvOrPath(apiKeyPath)
     if err != nil {
         log.Fatal(err)
@@ -73,6 +62,9 @@ func main() {
     long := config.Location.Long
     fmt.Printf("lat: %f long: %f\n", lat, long)
 
+    cacheDir := config.Cache.Directory
+    os.MkdirAll(cacheDir, 0700)
+    fmt.Printf("cacheDir: %s \n", cacheDir)
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
     // forecast, err := forecast.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 

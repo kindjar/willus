@@ -48,28 +48,29 @@ func loadTemplate(tmplName string) (tmpl *template.Template) {
 }
 
 func main() {
+    logger := log.New(os.Stderr, "", log.Lshortfile | log.LstdFlags)
     config, err := loadConfig(DefaultConfigPath)
     if err != nil {
-        log.Fatal(err)
+        logger.Fatal(err)
     }
 
     apiKeyPath := config.ApiKey.File
     key, err := apiKeyFromEnvOrPath(apiKeyPath)
     if err != nil {
-        log.Fatal(err)
+        logger.Fatal(err)
     }
-    fmt.Println("key: ", key)
+    logger.Println("key: ", key)
 
     lat := config.Location.Lat
     long := config.Location.Long
-    fmt.Printf("lat: %f long: %f\n", lat, long)
+    logger.Printf("lat: %f long: %f\n", lat, long)
 
     cacheDir := config.Cache.Directory
     os.MkdirAll(cacheDir, 0700)
-    fmt.Printf("cacheDir: %s \n", cacheDir)
+    logger.Printf("cacheDir: %s \n", cacheDir)
 
     jsonBytes, _ := json.MarshalIndent(config, "", "  ")
-    fmt.Println(string(jsonBytes))
+    logger.Println(string(jsonBytes))
 
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
@@ -80,6 +81,9 @@ func main() {
         fmt.Println("No cache available, making remote request")
         forecast, err = forecastio.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
                 strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
+        if err != nil {
+            logger.Fatal(err)
+        }
         fmt.Println("Caching weather forecast")
         cache.Put(lat, long, forecast)
     }

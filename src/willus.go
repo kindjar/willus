@@ -6,9 +6,10 @@ import (
     "io/ioutil"
     "log"
     "strings"
+    "strconv"
     "net/http"
     "encoding/json"
-    // forecast "github.com/mlbright/forecast/v2"
+    forecastio "github.com/mlbright/forecast/v2"
     "html/template"
 )
 
@@ -72,18 +73,23 @@ func main() {
 
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
-    // forecast, err := forecast.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
-    //         strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
-    // if err != nil {
-    //     log.Fatal(err)
-    // }
+    cache := NewWeatherCache(config.Cache.Directory)
+    forecast := cache.Get(lat, long)
 
-    // fmt.Println("Timezone", forecast.Timezone)
-    // fmt.Println("Summary", forecast.Currently.Summary)
-    // fmt.Println("Humidity", forecast.Currently.Humidity)
-    // fmt.Println("Temperature", forecast.Currently.Temperature)
-    // // fmt.Println(forecast.Flags.Units)
-    // fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
+    if forecast == nil {
+        fmt.Println("No cache available, making remote request")
+        forecast, err = forecastio.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
+                strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
+        fmt.Println("Caching weather forecast")
+        cache.Put(lat, long, forecast)
+    }
+
+    fmt.Println("Timezone", forecast.Timezone)
+    fmt.Println("Summary", forecast.Currently.Summary)
+    fmt.Println("Humidity", forecast.Currently.Humidity)
+    fmt.Println("Temperature", forecast.Currently.Temperature)
+    // fmt.Println(forecast.Flags.Units)
+    fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
 }
 
 // func main() {

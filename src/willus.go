@@ -73,8 +73,9 @@ func main() {
     logger.Println(string(jsonBytes))
 
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+    cache := NewWeatherCache(config.Cache.Directory, 
+            config.Cache.CacheTimeoutMinutes)
 
-    cache := NewWeatherCache(config.Cache.Directory)
     forecast := cache.Get(lat, long)
 
     if forecast == nil {

@@ -11,13 +11,14 @@ import (
 
 type WeatherCache struct {
     Directory string
+    CacheTimeoutMinutes float64
 }
 
-var singletonCacheFile = "weather_cache"
+const singletonCacheFile = "weather_cache"
 const timeFormat = "2006-01-02 15:04:05"
 
-func NewWeatherCache(cacheDir string) (*WeatherCache) {
-    return &WeatherCache{Directory: cacheDir}
+func NewWeatherCache(cacheDir string, cacheTimeout float64) (*WeatherCache) {
+    return &WeatherCache{Directory: cacheDir, CacheTimeoutMinutes: cacheTimeout}
 }
 
 func (cache *WeatherCache) pathForData(lat float64, long float64) (path string) {
@@ -34,7 +35,7 @@ func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.
         if err == nil {
             unixTime := time.Unix(int64(unmarshalledForecast.Currently.Time), 0)
             timeAgo := time.Since(unixTime)
-            if timeAgo.Hours() < 1.0 {
+            if timeAgo.Minutes() < cache.CacheTimeoutMinutes {
                 fmt.Printf("Using cached data from %s\n", unixTime.Format(timeFormat))
                 forecast = &unmarshalledForecast
             } else {

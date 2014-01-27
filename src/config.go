@@ -18,6 +18,7 @@ type Config struct {
     }
     Cache struct {
         Directory string
+        CacheTimeoutMinutes float64
     }
 }
 

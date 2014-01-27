@@ -47,10 +47,10 @@ func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.
                 cache.logger.Printf("Cache is stale (%s)\n", unixTime.Format(timeFormat))
             }
         } else {
-            // cache.logger.Println("Invalid cache:", err)
+            cache.logger.Fatalln("Invalid cache:", err)
         }
     } else {
-        // cache.logger.Println("Unable to read cache:", err)
+        cache.logger.Println("Unable to read cache:", err)
     }
     return
 }

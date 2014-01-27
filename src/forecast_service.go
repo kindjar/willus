@@ -31,7 +31,7 @@ func (forecaster *ForecastService) Get(lat float64, long float64) (forecast *for
                 "now", "us")
 
         if err != nil {
-            forecaster.logger.Fatal(err)
+            forecaster.logger.Println(err)
         }
     
         if forecaster.Cache != nil {

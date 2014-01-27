@@ -14,6 +14,7 @@ type WeatherCache struct {
 }
 
 var singletonCacheFile = "weather_cache"
+const timeFormat = "2006-01-02 15:04:05"
 
 func NewWeatherCache(cacheDir string) (*WeatherCache) {
     return &WeatherCache{Directory: cacheDir}
@@ -34,10 +35,10 @@ func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.
             unixTime := time.Unix(int64(unmarshalledForecast.Currently.Time), 0)
             timeAgo := time.Since(unixTime)
             if timeAgo.Hours() < 1.0 {
-                fmt.Printf("Using cached data from %s\n", unixTime.Format("2006-01-02 15:04:05"))
+                fmt.Printf("Using cached data from %s\n", unixTime.Format(timeFormat))
                 forecast = &unmarshalledForecast
             } else {
-                fmt.Printf("Cache is stale (%s)\n", unixTime.Format("2006-01-02 15:04:05"))
+                fmt.Printf("Cache is stale (%s)\n", unixTime.Format(timeFormat))
             }
         } else {
             // fmt.Println("Invalid cache:", err)

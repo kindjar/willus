@@ -71,7 +71,7 @@ func main() {
     logger.Println(string(jsonBytes))
 
     cache := NewWeatherCache(config.Cache.Directory, 
-            config.Cache.CacheTimeoutMinutes)
+            config.Cache.CacheTimeoutMinutes, logger)
     forecaster := NewForecastService(key, cache, logger)
 
     forecast := forecaster.Get(lat, long)

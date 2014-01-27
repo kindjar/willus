@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+    "log"
     "path/filepath"
     "io/ioutil"
     "encoding/json"
@@ -12,18 +12,23 @@ import (
 type WeatherCache struct {
     Directory string
     CacheTimeoutMinutes float64
+    logger *log.Logger
 }
 
 const singletonCacheFile = "weather_cache"
 const timeFormat = "2006-01-02 15:04:05"
 
-func NewWeatherCache(cacheDir string, cacheTimeout float64) (*WeatherCache) {
-    return &WeatherCache{Directory: cacheDir, CacheTimeoutMinutes: cacheTimeout}
+func NewWeatherCache(cacheDir string, cacheTimeout float64, logger *log.Logger) (*WeatherCache) {
+    return &WeatherCache{
+        Directory: cacheDir, 
+        CacheTimeoutMinutes: cacheTimeout,
+        logger: logger,
+    }
 }
 
 func (cache *WeatherCache) pathForData(lat float64, long float64) (path string) {
     path = filepath.Join(cache.Directory, singletonCacheFile)
-    // fmt.Println("Using cache file:", path)
+    // cache.logger.Println("Using cache file:", path)
     return
 }
 
@@ -36,16 +41,16 @@ func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.
             unixTime := time.Unix(int64(unmarshalledForecast.Currently.Time), 0)
             timeAgo := time.Since(unixTime)
             if timeAgo.Minutes() < cache.CacheTimeoutMinutes {
-                fmt.Printf("Using cached data from %s\n", unixTime.Format(timeFormat))
+                cache.logger.Printf("Using cached data from %s\n", unixTime.Format(timeFormat))
                 forecast = &unmarshalledForecast
             } else {
-                fmt.Printf("Cache is stale (%s)\n", unixTime.Format(timeFormat))
+                cache.logger.Printf("Cache is stale (%s)\n", unixTime.Format(timeFormat))
             }
         } else {
-            // fmt.Println("Invalid cache:", err)
+            // cache.logger.Println("Invalid cache:", err)
         }
     } else {
-        // fmt.Println("Unable to read cache:", err)
+        // cache.logger.Println("Unable to read cache:", err)
     }
     return
 }

@@ -6,10 +6,8 @@ import (
     "io/ioutil"
     "log"
     "strings"
-    "strconv"
     "net/http"
     "encoding/json"
-    forecastio "github.com/mlbright/forecast/v2"
     "html/template"
 )
 
@@ -72,22 +70,13 @@ func main() {
     jsonBytes, _ := json.MarshalIndent(config, "", "  ")
     logger.Println(string(jsonBytes))
 
-    // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
     cache := NewWeatherCache(config.Cache.Directory, 
             config.Cache.CacheTimeoutMinutes)
+    forecaster := NewForecastService(key, cache, logger)
 
-    forecast := cache.Get(lat, long)
+    forecast := forecaster.Get(lat, long)
 
-    if forecast == nil {
-        fmt.Println("No cache available, making remote request")
-        forecast, err = forecastio.Get(key, strconv.FormatFloat(lat, 'f', 6, 64), 
-                strconv.FormatFloat(long, 'f', 6, 64), "now", "us")
-        if err != nil {
-            logger.Fatal(err)
-        }
-        fmt.Println("Caching weather forecast")
-        cache.Put(lat, long, forecast)
-    }
+    // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
     fmt.Println("Timezone", forecast.Timezone)
     fmt.Println("Summary", forecast.Currently.Summary)

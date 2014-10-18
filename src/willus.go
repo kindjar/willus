@@ -45,6 +45,20 @@ func loadTemplate(tmplName string) (tmpl *template.Template) {
     return
 }
 
+func setupForecaster(config Config, apiKey string, logger *log.Logger) (forecaster *ForecastService) {
+    cacheDir := config.Cache.Directory
+    os.MkdirAll(cacheDir, 0700)
+    logger.Printf("cacheDir: %s \n", cacheDir)
+
+    jsonBytes, _ := json.MarshalIndent(config, "", "  ")
+    logger.Println(string(jsonBytes))
+
+    cache := NewWeatherCache(config.Cache.Directory,
+            config.Cache.CacheTimeoutMinutes, logger)
+
+    return NewForecastService(apiKey, cache, logger)
+}
+
 func main() {
     logger := log.New(os.Stderr, "", log.Lshortfile | log.LstdFlags)
     config, err := loadConfig(DefaultConfigPath)
@@ -59,20 +73,11 @@ func main() {
     }
     logger.Println("key: ", key)
 
+    forecaster := setupForecaster(config, key, logger)
+
     lat := config.Location.Lat
     long := config.Location.Long
     logger.Printf("lat: %f long: %f\n", lat, long)
-
-    cacheDir := config.Cache.Directory
-    os.MkdirAll(cacheDir, 0700)
-    logger.Printf("cacheDir: %s \n", cacheDir)
-
-    jsonBytes, _ := json.MarshalIndent(config, "", "  ")
-    logger.Println(string(jsonBytes))
-
-    cache := NewWeatherCache(config.Cache.Directory,
-            config.Cache.CacheTimeoutMinutes, logger)
-    forecaster := NewForecastService(key, cache, logger)
 
     forecast, _ := forecaster.Get(lat, long, true)
 

@@ -70,11 +70,11 @@ func main() {
     jsonBytes, _ := json.MarshalIndent(config, "", "  ")
     logger.Println(string(jsonBytes))
 
-    cache := NewWeatherCache(config.Cache.Directory, 
+    cache := NewWeatherCache(config.Cache.Directory,
             config.Cache.CacheTimeoutMinutes, logger)
     forecaster := NewForecastService(key, cache, logger)
 
-    forecast := forecaster.Get(lat, long)
+    forecast, _ := forecaster.Get(lat, long, true)
 
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
@@ -84,6 +84,8 @@ func main() {
     fmt.Println("Temperature", forecast.Currently.Temperature)
     // fmt.Println(forecast.Flags.Units)
     fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
+
+    forecaster.WaitForPendingForecasts()
 }
 
 // func main() {

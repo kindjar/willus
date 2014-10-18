@@ -17,10 +17,11 @@ type WeatherCache struct {
 
 const singletonCacheFile = "weather_cache"
 const timeFormat = "2006-01-02 15:04:05"
+var cacheSemaphore = make(chan int, 1)
 
 func NewWeatherCache(cacheDir string, cacheTimeout float64, logger *log.Logger) (*WeatherCache) {
     return &WeatherCache{
-        Directory: cacheDir, 
+        Directory: cacheDir,
         CacheTimeoutMinutes: cacheTimeout,
         logger: logger,
     }
@@ -32,8 +33,11 @@ func (cache *WeatherCache) pathForData(lat float64, long float64) (path string) 
     return
 }
 
-func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.Forecast) {
+func (cache *WeatherCache) Get(lat float64, long float64, allowStale bool) (forecast *forecastio.Forecast, isStale bool) {
+    isStale = true
+    cacheSemaphore <- 1
     cachedBytes, err := ioutil.ReadFile(cache.pathForData(lat, long))
+    <-cacheSemaphore
     if err == nil {
         var unmarshalledForecast forecastio.Forecast
         err = json.Unmarshal(cachedBytes, &unmarshalledForecast)
@@ -43,8 +47,12 @@ func (cache *WeatherCache) Get(lat float64, long float64) (forecast *forecastio.
             if timeAgo.Minutes() < cache.CacheTimeoutMinutes {
                 cache.logger.Printf("Using cached data from %s\n", unixTime.Format(timeFormat))
                 forecast = &unmarshalledForecast
+                isStale = false
             } else {
                 cache.logger.Printf("Cache is stale (%s)\n", unixTime.Format(timeFormat))
+                if allowStale {
+                    forecast = &unmarshalledForecast
+                }
             }
         } else {
             cache.logger.Fatalln("Invalid cache:", err)
@@ -59,7 +67,9 @@ func (cache *WeatherCache) Put(lat float64, long float64, forecast *forecastio.F
     path := cache.pathForData(lat, long)
     jsonBytes, err := json.MarshalIndent(forecast, "", "  ")
     if err == nil {
+        cacheSemaphore <- 1
         err = ioutil.WriteFile(path, jsonBytes, 0600)
+        <-cacheSemaphore
     }
     return
 }

@@ -94,5 +94,18 @@
         </div>
       {{end}}
     </div>
+    {{if .Alerts}}
+      <h2>Alerts</h2>
+      <div class="alerts">
+        {{range .Alerts}}
+          <div class="alert">
+            <h3>{{.Title}}</h3>
+            <div class="expires">{{.Expires}}</div>
+            <div class="description">{{.Description}}</div>
+            <a href="{{.Uri}}">{{.Uri}}</a>
+          </div>
+        {{end}}
+      </div>
+    {{end}}
   </body>
 </html>

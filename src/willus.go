@@ -23,6 +23,7 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
     myLat := valueAsFloatWithDefault(r.FormValue("lat"), defaultLatitude)
     myLong := valueAsFloatWithDefault(r.FormValue("long"), defaultLongitude)
     page, _ := template.ParseFiles("templates/index.html.tmpl")
+    page = page.Funcs(CommonTemplateHelpers())
     forecast, _ := forecaster.Get(myLat, myLong, true)
     page.Execute(w, forecast)
 }

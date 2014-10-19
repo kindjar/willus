@@ -6,15 +6,34 @@ import (
     "io/ioutil"
     "log"
     "strings"
+    "strconv"
     "net/http"
     "encoding/json"
     "html/template"
 )
 
 const DefaultConfigPath = "config/willus.cfg"
+var config *Config
+var logger *log.Logger
+var forecaster *ForecastService
+var defaultLatitude float64
+var defaultLongitude float64
 
-func handler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+    myLat := valueAsFloatWithDefault(r.FormValue("lat"), defaultLatitude)
+    myLong := valueAsFloatWithDefault(r.FormValue("long"), defaultLongitude)
+    page, _ := template.ParseFiles("templates/index.html.tmpl")
+    forecast, _ := forecaster.Get(myLat, myLong, true)
+    page.Execute(w, forecast)
+}
+
+func valueAsFloatWithDefault(value string, defaultFloat float64) (float64) {
+    floatVal, err := strconv.ParseFloat(value, 64)
+    if err != nil {
+        return defaultFloat
+    } else {
+        return floatVal
+    }
 }
 
 func apiKeyFromEnvOrPath(path string) (key string, err error) {
@@ -60,7 +79,7 @@ func setupForecaster(config Config, apiKey string, logger *log.Logger) (forecast
 }
 
 func main() {
-    logger := log.New(os.Stderr, "", log.Lshortfile | log.LstdFlags)
+    logger = log.New(os.Stderr, "", log.Lshortfile | log.LstdFlags)
     config, err := loadConfig(DefaultConfigPath)
     if err != nil {
         logger.Fatal(err)
@@ -73,13 +92,13 @@ func main() {
     }
     logger.Println("key: ", key)
 
-    forecaster := setupForecaster(config, key, logger)
+    forecaster = setupForecaster(config, key, logger)
 
-    lat := config.Location.Lat
-    long := config.Location.Long
-    logger.Printf("lat: %f long: %f\n", lat, long)
+    defaultLatitude = config.Location.Lat
+    defaultLongitude = config.Location.Long
+    logger.Printf("lat: %f long: %f\n", defaultLatitude, defaultLongitude)
 
-    forecast, _ := forecaster.Get(lat, long, true)
+    forecast, _ := forecaster.Get(defaultLatitude, defaultLongitude, true)
 
     // var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
@@ -89,6 +108,9 @@ func main() {
     fmt.Println("Temperature", forecast.Currently.Temperature)
     // fmt.Println(forecast.Flags.Units)
     fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
+
+    http.HandleFunc("/", mainHandler)
+    http.ListenAndServe(":8080", nil)
 
     forecaster.WaitForPendingForecasts()
 }

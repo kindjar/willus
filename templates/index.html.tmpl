@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>Weather for {{.Latitude}}, {{.Longitude}}</title>
+  </head>
+  <body>
+    <h1>
+      Weather forecast for {{.Latitude}}, {{.Longitude}} as of
+      {{.Currently.Time}}
+    </h1>
+    <h2 class="summary">{{.Currently.Summary}}, {{.Currently.Temperature}}&deg;</h2>
+    <div class="details">
+      <div class="icon">{{.Currently.Icon}}</div>
+      <div class="sunrise">{{.Currently.SunriseTime}}</div>
+      <div class="sunset">{{.Currently.SunsetTime}}</div>
+    </div>
+  </body>
+</html>

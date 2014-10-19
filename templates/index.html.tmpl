@@ -10,8 +10,30 @@
     <h2 class="summary">{{.Currently.Summary}}, {{.Currently.Temperature}}&deg;</h2>
     <div class="details">
       <div class="icon">{{.Currently.Icon}}</div>
-      <div class="sunrise">{{.Currently.SunriseTime}}</div>
-      <div class="sunset">{{.Currently.SunsetTime}}</div>
+    </div>
+    <h2>Hourly</h2>
+    <div class="hourly">
+      {{range .Hourly.Data}}
+        <div class="hour>
+          <div class="time">{{.Time}}</div>
+          <div class="summary">{{.Summary}}</div>
+          <div class="icon">{{.Icon}}</div>
+          <div class="precipIntensity">{{.PrecipIntensity}}</div>
+          <div class="precipProbability">{{.PrecipProbability}}</div>
+          {{if .PrecipIntensity}}
+            <div class="precipType">{{.PrecipType}}</div>
+          {{end}}
+          <div class="temperature">{{.Temperature}}</div>
+          <div class="apparentTemperature>{{.ApparentTemperature}}</div>
+          <div class="windSpeed">{{.WindSpeed}}</div>
+          {{if .WindSpeed}}
+            <div class="windBearing">{{.WindBearing}}</div>
+          {{end}}
+          <div class="cloudCover">{{.CloudCover}}</div>
+          <div class="humidity">{{.Humidity}}</div>
+          <div class="pressure">{{.Pressure}}</div>
+        </div>
+      {{end}}
     </div>
   </body>
 </html>

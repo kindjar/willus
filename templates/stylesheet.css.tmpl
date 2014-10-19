@@ -1,0 +1,45 @@
+.temperature::after {
+  content: "\00B0"
+}
+
+.sunriseTime::before {
+  content: "Sunrise: ";
+}
+
+.sunsetTime::before {
+  content: "Sunset: ";
+}
+
+.precipAccumulation::after {
+  content: " inches accumulation"
+}
+
+.windSpeed::after {
+  content: " mph"
+}
+
+.windBearing::after {
+  content: "\00B0"
+}
+
+.cloudCover::after {
+  content: " cloud cover"
+}
+
+.humidity::after {
+  content: " relative humidity"
+}
+
+.pressure::after {
+  content: " mb"
+}
+
+.minutely .minute, .hourly .hour {
+  float: left;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+h2, .minutely, .hourly, .daily {
+  clear: both;
+}

@@ -9,7 +9,7 @@ import (
     "strconv"
     "net/http"
     "encoding/json"
-    "html/template"
+    htmlTemplate "html/template"
 )
 
 const DefaultConfigPath = "config/willus.cfg"
@@ -22,10 +22,23 @@ var defaultLongitude float64
 func mainHandler(w http.ResponseWriter, r *http.Request) {
     myLat := valueAsFloatWithDefault(r.FormValue("lat"), defaultLatitude)
     myLong := valueAsFloatWithDefault(r.FormValue("long"), defaultLongitude)
-    page, _ := template.ParseFiles("templates/index.html.tmpl")
-    page = page.Funcs(CommonTemplateHelpers())
-    forecast, _ := forecaster.Get(myLat, myLong, true)
-    page.Execute(w, forecast)
+    templateName := "main"
+    page := htmlTemplate.Must(
+            htmlTemplate.New(templateName).
+                    Funcs(CommonTemplateHelpers()).
+                    ParseGlob("templates/*.tmpl"))
+    // page, err := htmlTemplate.ParseFiles("templates/index.html.tmpl")
+    //                 // Funcs(CommonTemplateHelpers()).
+    //                 // ParseFiles("templates/index.html.tmpl")
+    forecast, isStale := forecaster.Get(myLat, myLong, true)
+    if isStale {
+        logger.Println("Forecast is stale.")
+    }
+    err := page.ExecuteTemplate(w, "index.html.tmpl", forecast)
+    // err = page.Execute(w, forecast)
+    if err != nil {
+        logger.Println("Error executing template: ", err)
+    }
 }
 
 func valueAsFloatWithDefault(value string, defaultFloat float64) (float64) {
@@ -60,8 +73,8 @@ func apiKeyFromPath(path string) (key string, err error) {
     return strings.TrimSpace(key), nil
 }
 
-func loadTemplate(tmplName string) (tmpl *template.Template) {
-    tmpl, _ = template.ParseFiles(tmplName)
+func loadTemplate(tmplName string) (tmpl *htmlTemplate.Template) {
+    tmpl, _ = htmlTemplate.ParseFiles(tmplName)
     return
 }
 

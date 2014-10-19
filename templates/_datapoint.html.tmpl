@@ -1,0 +1,42 @@
+<div class="summary">{{.Summary}}</div>
+<div class="icon">{{.Icon}}</div>
+{{if .SunriseTime}}
+  <div class="sunriseTime">{{FloatAsDateTime .SunriseTime "shortTime"}}</div>
+{{end}}
+{{if .SunriseTime}}
+  <div class="sunsetTime">{{FloatAsDateTime .SunsetTime "shortTime"}}</div>
+{{end}}
+{{if .PrecipProbability}}
+  <div class="precipProbability">
+     {{FloatAsPercent .PrecipProbability}} chance of
+     <span class=".PrecipIntensity" title="{{.PrecipIntensity}} inches per hour">{{FloatAsPrecipIntensityDescription .PrecipIntensity .PrecipType}}</span>
+     {{.PrecipType}}
+  </div>
+{{end}}
+{{if .PrecipAccumulation}}
+  <div class="precipAccumulation">{{.PrecipAccumulation}}</div>
+{{end}}
+{{if .PrecipIntensityMax}}
+  <div class="precipIntensityMax">Peak: {{.PrecipIntensityMax}} at {{FloatAsDateTime .PrecipIntensityMaxTime "shortTime"}}</div>
+{{end}}
+{{if .TemperatureMin}}
+  <div class="temperatureMin">Low: <span class="temperature">{{RoundToInteger .TemperatureMin}}</span> around {{FloatAsDateTime .TemperatureMinTime "shortTime"}}</div>
+{{end}}
+{{if .TemperatureMax}}
+  <div class="temperatureMax">High: <span class="temperature">{{RoundToInteger .TemperatureMax}}</span> around {{FloatAsDateTime .TemperatureMaxTime "shortTime"}}</div>
+{{end}}
+{{if .WindSpeed}}
+  <div class="wind">
+     <span class="windSpeed">{{RoundToInteger .WindSpeed}}</span>
+     <span class="windBearing">{{.WindBearing}}</span>
+  </div>
+{{end}}
+{{if .CloudCover}}
+  <div class="cloudCover">{{FloatAsPercent .CloudCover}}</div>
+{{end}}
+{{if .Humidity}}
+  <div class="humidity">{{FloatAsPercent .Humidity}}</div>
+{{end}}
+{{if .Pressure}}
+  <div class="pressure">{{.Pressure}}</div>
+{{end}}

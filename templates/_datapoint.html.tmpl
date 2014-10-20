@@ -6,6 +6,12 @@
 {{if .SunriseTime}}
   <div class="sunsetTime">{{FloatAsDateTime .SunsetTime "shortTime"}}</div>
 {{end}}
+{{if .NearestStormBearing}}
+  <div class="nearestStorm">
+     <span class="distance">{{RoundToInteger .NearestStormDistance}}</span>
+     <span class="bearing">{{.NearestStormBearing}}</span>
+  </div>
+{{end}}
 {{if .PrecipProbability}}
   <div class="precipProbability">
      {{FloatAsPercent .PrecipProbability}} chance of
@@ -19,6 +25,9 @@
 {{if .PrecipIntensityMax}}
   <div class="precipIntensityMax">Peak: {{.PrecipIntensityMax}} at {{FloatAsDateTime .PrecipIntensityMaxTime "shortTime"}}</div>
 {{end}}
+{{if .Temperature}}
+  <div class="temperature">{{RoundToInteger .Temperature}}</div>
+{{end}}
 {{if .TemperatureMin}}
   <div class="temperatureMin">Low: <span class="temperature">{{RoundToInteger .TemperatureMin}}</span> around {{FloatAsDateTime .TemperatureMinTime "shortTime"}}</div>
 {{end}}
@@ -27,8 +36,8 @@
 {{end}}
 {{if .WindSpeed}}
   <div class="wind">
-     <span class="windSpeed">{{RoundToInteger .WindSpeed}}</span>
-     <span class="windBearing">{{.WindBearing}}</span>
+     <span class="speed">{{RoundToInteger .WindSpeed}}</span>
+     <span class="bearing">{{.WindBearing}}</span>
   </div>
 {{end}}
 {{if .CloudCover}}
@@ -39,4 +48,7 @@
 {{end}}
 {{if .Pressure}}
   <div class="pressure">{{.Pressure}}</div>
+{{end}}
+{{if .MoonPhase}}
+  <div class="moonPhase">{{FloatAsPercent .MoonPhase}}</div>
 {{end}}

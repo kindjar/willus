@@ -10,7 +10,7 @@
       Weather forecast for {{.Latitude}}, {{.Longitude}} as of
       {{FloatAsDateTime .Currently.Time "long"}}
     </h1>
-    <h2 class="summary">{{.Currently.Summary}}, {{.Currently.Temperature}}&deg;</h2>
+    <h2 class="summary">{{.Currently.Summary}}, {{RoundToInteger .Currently.Temperature}}&deg;</h2>
     <div class="details">
       <div class="icon">{{.Currently.Icon}}</div>
     </div>

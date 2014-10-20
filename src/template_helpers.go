@@ -32,7 +32,8 @@ func FloatAsPercent(percent float64) (formatted string) {
 }
 
 func FloatAsPrecipIntensityDescription(intensity float64, precipType string) (formatted string) {
-    if len(precipType) == 0 { return }
+    if len(precipType) == 0 { return }  // no-op to allow precipType parameter for future
+
     if intensity > 0.4 {
         formatted = "heavy"
     } else if intensity > 0.1 {

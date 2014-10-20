@@ -3,7 +3,6 @@ package main
 import (
     "strconv"
     "log"
-    forecastio "github.com/mlbright/forecast/v2"
 )
 
 type ForecastService struct {
@@ -18,7 +17,7 @@ func NewForecastService(key string, cache *WeatherCache, logger *log.Logger) (*F
     return &ForecastService{ApiKey: key, Cache: cache, logger: logger}
 }
 
-func (forecaster *ForecastService) Get(lat float64, long float64, allowStale bool) (forecast *forecastio.Forecast, isStale bool) {
+func (forecaster *ForecastService) Get(lat float64, long float64, allowStale bool) (forecast *Forecast, isStale bool) {
     isStale = false
     if forecaster.Cache != nil {
         forecast, isStale = forecaster.Cache.Get(lat, long, true)
@@ -46,9 +45,10 @@ func (forecaster *ForecastService) WaitForPendingForecasts() {
     forecastPendingSemaphore <- 1
 }
 
-func (forecaster *ForecastService) fetchForecast(lat float64, long float64) (forecast *forecastio.Forecast) {
+func (forecaster *ForecastService) fetchForecast(lat float64, long float64) (forecast *Forecast) {
     var err error
-    forecast, err = forecastio.Get(forecaster.ApiKey,
+    forecast, err = CallForecastAPI(
+            forecaster.ApiKey,
             strconv.FormatFloat(lat, 'f', 6, 64),
             strconv.FormatFloat(long, 'f', 6, 64),
             "now", "us")

@@ -6,7 +6,6 @@ import (
     "io/ioutil"
     "encoding/json"
     "time"
-    forecastio "github.com/mlbright/forecast/v2"
 )
 
 type WeatherCache struct {
@@ -33,13 +32,13 @@ func (cache *WeatherCache) pathForData(lat float64, long float64) (path string) 
     return
 }
 
-func (cache *WeatherCache) Get(lat float64, long float64, allowStale bool) (forecast *forecastio.Forecast, isStale bool) {
+func (cache *WeatherCache) Get(lat float64, long float64, allowStale bool) (forecast *Forecast, isStale bool) {
     isStale = true
     cacheSemaphore <- 1
     cachedBytes, err := ioutil.ReadFile(cache.pathForData(lat, long))
     <-cacheSemaphore
     if err == nil {
-        var unmarshalledForecast forecastio.Forecast
+        var unmarshalledForecast Forecast
         err = json.Unmarshal(cachedBytes, &unmarshalledForecast)
         if err == nil {
             unixTime := time.Unix(int64(unmarshalledForecast.Currently.Time), 0)
@@ -63,7 +62,7 @@ func (cache *WeatherCache) Get(lat float64, long float64, allowStale bool) (fore
     return
 }
 
-func (cache *WeatherCache) Put(lat float64, long float64, forecast *forecastio.Forecast) (err error) {
+func (cache *WeatherCache) Put(lat float64, long float64, forecast *Forecast) (err error) {
     path := cache.pathForData(lat, long)
     jsonBytes, err := json.MarshalIndent(forecast, "", "  ")
     if err == nil {

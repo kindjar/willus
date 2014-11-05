@@ -1,9 +1,9 @@
 package main
 
 type WillusError struct {
-    Message string
+	Message string
 }
 
 func (e WillusError) Error() (error string) {
-    return e.Message
+	return e.Message
 }

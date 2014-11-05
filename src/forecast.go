@@ -25,64 +25,64 @@ type Flags struct {
 }
 
 type DataPoint struct {
-	Time                   		float64
-	Summary                		string
-	Icon                   		string
-	SunriseTime            		float64
-	SunsetTime             		float64
-	MoonPhase					float64
-	NearestStormDistance		float64
-	NearestStormBearing			float64
-	PrecipIntensity        		float64
-	PrecipIntensityMax     		float64
-	PrecipIntensityMaxTime 		float64
-	PrecipProbability      		float64
-	PrecipType             		string
-	PrecipAccumulation     		float64
-	Temperature            		float64
-	TemperatureMin         		float64
-	TemperatureMinTime     		float64
-	TemperatureMax         		float64
-	TemperatureMaxTime     		float64
-	ApparentTemperature	   		float64
-	ApparentTemperatureMin		float64
-	ApparentTemperatureMinTime	float64
-	ApparentTemperatureMax		float64
-	ApparentTemperatureMaxTime	float64
-	DewPoint               		float64
-	WindSpeed              		float64
-	WindBearing            		float64
-	CloudCover             		float64
-	Humidity               		float64
-	Pressure               		float64
-	Visibility             		float64
-	Ozone                  		float64
+	Time                       float64
+	Summary                    string
+	Icon                       string
+	SunriseTime                float64
+	SunsetTime                 float64
+	MoonPhase                  float64
+	NearestStormDistance       float64
+	NearestStormBearing        float64
+	PrecipIntensity            float64
+	PrecipIntensityMax         float64
+	PrecipIntensityMaxTime     float64
+	PrecipProbability          float64
+	PrecipType                 string
+	PrecipAccumulation         float64
+	Temperature                float64
+	TemperatureMin             float64
+	TemperatureMinTime         float64
+	TemperatureMax             float64
+	TemperatureMaxTime         float64
+	ApparentTemperature        float64
+	ApparentTemperatureMin     float64
+	ApparentTemperatureMinTime float64
+	ApparentTemperatureMax     float64
+	ApparentTemperatureMaxTime float64
+	DewPoint                   float64
+	WindSpeed                  float64
+	WindBearing                float64
+	CloudCover                 float64
+	Humidity                   float64
+	Pressure                   float64
+	Visibility                 float64
+	Ozone                      float64
 }
 
 type DataBlock struct {
-	Summary 	string
-	Icon    	string
-	Data    	[]DataPoint
+	Summary string
+	Icon    string
+	Data    []DataPoint
 }
 
 type alert struct {
-	Title   	string
-	Expires 	float64
-	Description	string
-	URI     	string
+	Title       string
+	Expires     float64
+	Description string
+	URI         string
 }
 
 type Forecast struct {
-	Latitude  	float64
-	Longitude 	float64
-	Timezone  	string
-	Offset    	float64
-	Currently 	DataPoint
-	Minutely  	DataBlock
-	Hourly    	DataBlock
-	Daily     	DataBlock
-	Alerts    	[]alert
-	Flags     	Flags
+	Latitude  float64
+	Longitude float64
+	Timezone  string
+	Offset    float64
+	Currently DataPoint
+	Minutely  DataBlock
+	Hourly    DataBlock
+	Daily     DataBlock
+	Alerts    []alert
+	Flags     Flags
 }
 
 type Units string

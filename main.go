@@ -1,6 +1,7 @@
 package main
 
 import (
+	. "./willus"
 	"encoding/json"
 	"fmt"
 	htmlTemplate "html/template"
@@ -95,7 +96,7 @@ func setupForecaster(config Config, apiKey string, logger *log.Logger) (forecast
 
 func main() {
 	logger = log.New(os.Stderr, "", log.Lshortfile|log.LstdFlags)
-	config, err := loadConfig(DefaultConfigPath)
+	config, err := LoadConfig(DefaultConfigPath)
 	if err != nil {
 		logger.Fatal(err)
 	}

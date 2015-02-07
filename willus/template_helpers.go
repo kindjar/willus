@@ -1,8 +1,10 @@
-package main
+package willus
 
 import (
 	"fmt"
 	htmlTemplate "html/template"
+	"os"
+	"log"
 	"time"
 )
 
@@ -10,6 +12,8 @@ const longDateTimeFormat = "2006-01-02 15:04:05"
 const shortDateTimeFormat = "Jan 2, 2006 3:04pm"
 const shortDateFormat = "Jan 2"
 const shortTimeFormat = "3:04pm"
+
+var logger = log.New(os.Stderr, "", log.Lshortfile|log.LstdFlags)
 
 func FloatAsDateTime(timestamp float64, format string) (formatted string) {
 	unixTime := time.Unix(int64(timestamp), 0)

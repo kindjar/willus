@@ -1,4 +1,4 @@
-package main
+package willus
 
 type WillusError struct {
 	Message string

@@ -1,4 +1,4 @@
-package main
+package willus
 
 import (
 	gcfg "code.google.com/p/gcfg"
@@ -22,7 +22,7 @@ type Config struct {
 	}
 }
 
-func loadConfig(path string) (cfg Config, err error) {
+func LoadConfig(path string) (cfg Config, err error) {
 	err = gcfg.ReadFileInto(&cfg, path)
 	if err != nil {
 		err = &WillusError{fmt.Sprintf(

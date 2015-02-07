@@ -1,4 +1,4 @@
-package main
+package willus
 
 import (
 	"encoding/json"

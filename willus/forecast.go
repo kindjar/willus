@@ -1,4 +1,4 @@
-package main
+package willus
 
 import (
 	"crypto/tls"
@@ -65,7 +65,7 @@ type DataBlock struct {
 	Data    []DataPoint
 }
 
-type alert struct {
+type Alert struct {
 	Title       string
 	Expires     float64
 	Description string
@@ -81,7 +81,7 @@ type Forecast struct {
 	Minutely  DataBlock
 	Hourly    DataBlock
 	Daily     DataBlock
-	Alerts    []alert
+	Alerts    []Alert
 	Flags     Flags
 }
 

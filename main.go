@@ -91,11 +91,6 @@ func apiKeyFromPath(path string) (key string, err error) {
 	return strings.TrimSpace(key), nil
 }
 
-func loadTemplate(tmplName string) (tmpl *htmlTemplate.Template) {
-	tmpl, _ = htmlTemplate.ParseFiles(tmplName)
-	return
-}
-
 func setupForecaster(config Config, apiKey string, logger *log.Logger) (forecaster *ForecastService) {
 	cacheDir := config.Cache.Directory
 	os.MkdirAll(cacheDir, 0700)

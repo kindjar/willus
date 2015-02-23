@@ -26,29 +26,43 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func minutelyHandler(w http.ResponseWriter, r *http.Request) {
-	sendJsonResponse(w, "")
+	forecast, _ := getRequestedForecast(r);
+	sendJsonResponse(w, forecast)
 }
 
 func hourlyHandler(w http.ResponseWriter, r *http.Request) {
-	sendJsonResponse(w, "")
+	forecast, _ := getRequestedForecast(r);
+	sendJsonResponse(w, forecast)
 }
 
 func dailyHandler(w http.ResponseWriter, r *http.Request) {
-	sendJsonResponse(w, "")
+	forecast, _ := getRequestedForecast(r);
+	dailyData := make(map[string][]float64)
+
+	highs := make([]float64, len(forecast.Daily.Data))
+	lows := make([]float64, len(forecast.Daily.Data))
+	for i, dataPoint := range forecast.Daily.Data {
+		highs[i] = dataPoint.TemperatureMax
+		lows[i] = dataPoint.TemperatureMin
+	}
+	dailyData["highs"] = highs
+	dailyData["lows"] = lows
+
+	sendJsonResponse(w, dailyData)
 }
 
 func getRequestedForecast(r *http.Request) (*Forecast, bool) {
 	myLat := valueAsFloatWithDefault(r.FormValue("lat"), defaultLatitude)
 	myLong := valueAsFloatWithDefault(r.FormValue("long"), defaultLongitude)
 	forecast, isStale := forecaster.Get(myLat, myLong, true)
+	if isStale {
+		logger.Println("Forecast is stale.")
+	}
 	return forecast, isStale;
 }
 
 func baseForecastHandler(w http.ResponseWriter, r *http.Request, template string) {
-	forecast, isStale := getRequestedForecast(r);
-	if isStale {
-		logger.Println("Forecast is stale.")
-	}
+	forecast, _ := getRequestedForecast(r);
 	page := htmlTemplate.Must(
 		htmlTemplate.New(template).
 			Funcs(CommonTemplateHelpers()).
@@ -56,12 +70,15 @@ func baseForecastHandler(w http.ResponseWriter, r *http.Request, template string
 	err := page.ExecuteTemplate(w, "index.html.tmpl", forecast)
 	if err != nil {
 		logger.Println("Error executing template: ", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
 func sendJsonResponse(w http.ResponseWriter, responseObject interface{}) {
 	js, err := json.Marshal(responseObject)
 	if err != nil {
+		logger.Println("Error marshalling json: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -158,7 +175,3 @@ func main() {
 	forecaster.WaitForPendingForecasts()
 }
 
-// func main() {
-//     http.HandleFunc("/forecast/", handler)
-//     http.ListenAndServe(":8080", nil)
-// }

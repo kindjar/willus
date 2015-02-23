@@ -26,15 +26,15 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func minutelyHandler(w http.ResponseWriter, r *http.Request) {
-	baseForecastHandler(w, r, "minutely")
+	sendJsonResponse(w, "")
 }
 
 func hourlyHandler(w http.ResponseWriter, r *http.Request) {
-	baseForecastHandler(w, r, "hourly")
+	sendJsonResponse(w, "")
 }
 
 func dailyHandler(w http.ResponseWriter, r *http.Request) {
-	baseForecastHandler(w, r, "daily")
+	sendJsonResponse(w, "")
 }
 
 func getRequestedForecast(r *http.Request) (*Forecast, bool) {
@@ -57,6 +57,17 @@ func baseForecastHandler(w http.ResponseWriter, r *http.Request, template string
 	if err != nil {
 		logger.Println("Error executing template: ", err)
 	}
+}
+
+func sendJsonResponse(w http.ResponseWriter, responseObject interface{}) {
+	js, err := json.Marshal(responseObject)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 func valueAsFloatWithDefault(value string, defaultFloat float64) float64 {

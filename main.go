@@ -22,22 +22,38 @@ var defaultLatitude float64
 var defaultLongitude float64
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
+	baseForecastHandler(w, r, "main")
+}
+
+func minutelyHandler(w http.ResponseWriter, r *http.Request) {
+	baseForecastHandler(w, r, "minutely")
+}
+
+func hourlyHandler(w http.ResponseWriter, r *http.Request) {
+	baseForecastHandler(w, r, "hourly")
+}
+
+func dailyHandler(w http.ResponseWriter, r *http.Request) {
+	baseForecastHandler(w, r, "daily")
+}
+
+func getRequestedForecast(r *http.Request) (*Forecast, bool) {
 	myLat := valueAsFloatWithDefault(r.FormValue("lat"), defaultLatitude)
 	myLong := valueAsFloatWithDefault(r.FormValue("long"), defaultLongitude)
-	templateName := "main"
-	page := htmlTemplate.Must(
-		htmlTemplate.New(templateName).
-			Funcs(CommonTemplateHelpers()).
-			ParseGlob("templates/*.tmpl"))
-	// page, err := htmlTemplate.ParseFiles("templates/index.html.tmpl")
-	//                 // Funcs(CommonTemplateHelpers()).
-	//                 // ParseFiles("templates/index.html.tmpl")
 	forecast, isStale := forecaster.Get(myLat, myLong, true)
+	return forecast, isStale;
+}
+
+func baseForecastHandler(w http.ResponseWriter, r *http.Request, template string) {
+	forecast, isStale := getRequestedForecast(r);
 	if isStale {
 		logger.Println("Forecast is stale.")
 	}
+	page := htmlTemplate.Must(
+		htmlTemplate.New(template).
+			Funcs(CommonTemplateHelpers()).
+			ParseGlob("templates/*.tmpl"))
 	err := page.ExecuteTemplate(w, "index.html.tmpl", forecast)
-	// err = page.Execute(w, forecast)
 	if err != nil {
 		logger.Println("Error executing template: ", err)
 	}
@@ -125,6 +141,11 @@ func main() {
 	// fmt.Println(forecast.Flags.Units)
 	fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
 
+	http.Handle("/static/", 
+			http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/minutely.json", minutelyHandler)
+	http.HandleFunc("/hourly.json", hourlyHandler)
+	http.HandleFunc("/daily.json", dailyHandler)
 	http.HandleFunc("/", mainHandler)
 	http.ListenAndServe(":8080", nil)
 

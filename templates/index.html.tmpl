@@ -1,9 +1,8 @@
 <html>
   <head>
     <title>Weather for {{.Latitude}}, {{.Longitude}}</title>
-    <style type="text/css">
-      {{template "stylesheet.css.tmpl"}}
-    </style>
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/application.css" />
+    <script type="text/javascript" src="/static/javascripts/d3.min.js"></script>
   </head>
   <body>
     <h1>

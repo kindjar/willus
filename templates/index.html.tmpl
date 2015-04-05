@@ -3,6 +3,7 @@
     <title>Weather for {{.Latitude}}, {{.Longitude}}</title>
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/application.css" />
     <script type="text/javascript" src="/static/javascripts/d3.min.js"></script>
+    <script type="text/javascript" src="/static/javascripts/application.js"></script>
   </head>
   <body>
     <h1>
@@ -31,6 +32,25 @@
         </div>
       {{end}}
     </div>
+
+    <div class="chart precipitation hourly">
+      <div class="y-axis">
+        <div class="top"></div>
+        <div class="bottom"></div>
+      </div>
+      <div class="area"></div>
+    </div>
+    <script type="text/javascript">
+      var hourlyPrecipitationData = [
+        {{range .Hourly.Data}}[{{.PrecipIntensity}}, {{.PrecipProbability}}],
+        {{end}}
+      ];
+      var hourlyPrecipitationChart = WILLUS.makePrecipChart(
+          '.precipitation.hourly', hourlyPrecipitationData, 
+          WILLUS.hourlyWidth, WILLUS.hourlyHeight
+      );
+    </script>
+
     <h2>Daily</h2>
     <div class="daily">
       {{range .Daily.Data}}
@@ -40,6 +60,25 @@
         </div>
       {{end}}
     </div>
+
+    <div class="chart precipitation daily">
+      <div class="y-axis">
+        <div class="top"></div>
+        <div class="bottom"></div>
+      </div>
+      <div class="area"></div>
+    </div>
+    <script type="text/javascript">
+      var dailyPrecipitationData = [
+        {{range .Daily.Data}}[{{.PrecipIntensity}}, {{.PrecipProbability}}],
+        {{end}}
+      ];
+      var dailyPrecipitationChart = WILLUS.makePrecipChart(
+          '.precipitation.daily', dailyPrecipitationData, 
+          WILLUS.dailyWidth, WILLUS.dailyHeight
+      );
+    </script>
+
     {{if .Alerts}}
       <h2>Alerts</h2>
       <div class="alerts">

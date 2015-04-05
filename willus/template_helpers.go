@@ -54,7 +54,7 @@ func FloatAsPrecipIntensityDescription(intensity float64, precipType string) (fo
 	} else if intensity > 0.002 {
 		formatted = "very light"
 	} else {
-		formatted = "none"
+		formatted = "no"
 	}
 	return
 }

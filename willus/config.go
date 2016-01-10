@@ -6,6 +6,9 @@ import (
 )
 
 type Config struct {
+	Webserver struct {
+		Port int64
+	}
 	ApiKey struct {
 		File string
 	}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "./willus"
+	. "github.com/kindjar/willus/willus"
 	"encoding/json"
 	"fmt"
 	htmlTemplate "html/template"
@@ -164,13 +164,15 @@ func main() {
 	// fmt.Println(forecast.Flags.Units)
 	fmt.Println("Wind Speed", forecast.Currently.WindSpeed)
 
-	http.Handle("/static/", 
+	http.Handle("/static/",
 			http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/minutely.json", minutelyHandler)
 	http.HandleFunc("/hourly.json", hourlyHandler)
 	http.HandleFunc("/daily.json", dailyHandler)
 	http.HandleFunc("/", mainHandler)
-	http.ListenAndServe(":8080", nil)
+	var listenAddr = fmt.Sprintf(":%d", config.Webserver.Port)
+	logger.Printf("Webserver listening at %s", listenAddr)
+	http.ListenAndServe(listenAddr, nil)
 
 	forecaster.WaitForPendingForecasts()
 }

@@ -56,7 +56,6 @@ h2, .minutely, .hourly, .daily {
 /* Graphs */
 .chart .area {
   position: relative;
-  margin-left: 40px;
   border: solid 1px #ccc;
   border-width: 1px 0;
 }
@@ -86,13 +85,16 @@ h2, .minutely, .hourly, .daily {
   bottom: 0;
 }
 
-.chart.precipitation .bar {
+.precipitation-chart {
+  margin-left: 40px;
+}
+.precipitation-chart .bar {
   font: 10px sans-serif;
   background-color: steelblue;
   position: absolute;
   bottom: 0;
 }
 
-.chart.temperature canvas {
+.temperature-chart canvas {
   border: solid 1px green;
 }

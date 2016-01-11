@@ -2,7 +2,7 @@
   <head>
     <title>Weather for {{.Latitude}}, {{.Longitude}}</title>
     <link rel="stylesheet" type="text/css" href="/static/stylesheets/application.css" />
-    <script type="text/javascript" src="/static/javascripts/d3.min.js"></script>
+    <script type="text/javascript" src="/static/javascripts/d3.js"></script>
     <script type="text/javascript" src="/static/javascripts/application.js"></script>
   </head>
   <body>
@@ -33,7 +33,7 @@
       {{end}}
     </div>
 
-    <div class="chart precipitation hourly">
+    <div class="chart precipitation-chart hourly">
       <div class="y-axis">
         <div class="top"></div>
         <div class="bottom"></div>
@@ -46,7 +46,7 @@
         {{end}}
       ];
       var hourlyPrecipitationChart = WILLUS.makePrecipChart(
-          '.precipitation.hourly', hourlyPrecipitationData, 
+          '.precipitation-chart.hourly', hourlyPrecipitationData,
           WILLUS.hourlyWidth, WILLUS.hourlyHeight
       );
     </script>
@@ -61,7 +61,21 @@
       {{end}}
     </div>
 
-    <div class="chart precipitation daily">
+    <div class="chart temperature-chart daily">
+      <div class="area"></div>
+    </div>
+    <script type="text/javascript">
+      var dailyTemperatureData = [
+        {{range .Daily.Data}}[WILLUS.asTempMinTime("{{FloatAsDateTime .TemperatureMinTime "iso8601DateTime"}}"), {{.TemperatureMin}}], [WILLUS.asTempMaxTime("{{FloatAsDateTime .TemperatureMaxTime "iso8601DateTime"}}"), {{.TemperatureMax}}],
+        {{end}}
+      ];
+      var dailyTempChart = WILLUS.makeTempChart(
+          '.temperature-chart.daily', dailyTemperatureData,
+          WILLUS.dailyTemperatureWidth, WILLUS.dailyTemperatureHeight
+      );
+    </script>
+
+    <div class="chart precipitation-chart daily">
       <div class="y-axis">
         <div class="top"></div>
         <div class="bottom"></div>
@@ -74,8 +88,8 @@
         {{end}}
       ];
       var dailyPrecipitationChart = WILLUS.makePrecipChart(
-          '.precipitation.daily', dailyPrecipitationData, 
-          WILLUS.dailyWidth, WILLUS.dailyHeight
+          '.precipitation-chart.daily', dailyPrecipitationData,
+          WILLUS.dailyPrecipitationWidth, WILLUS.dailyPrecipitationHeight
       );
     </script>
 
@@ -87,5 +101,8 @@
         {{end}}
       </div>
     {{end}}
+    <footer>
+      <a href="http://forecast.io/">Powered by Forecast</a>
+    </footer>
   </body>
 </html>

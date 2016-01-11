@@ -12,6 +12,7 @@ const longDateTimeFormat = "2006-01-02 15:04:05"
 const shortDateTimeFormat = "Jan 2, 2006 3:04pm"
 const shortDateFormat = "Jan 2"
 const shortTimeFormat = "3:04pm"
+const iso8601DateTimeFormat = "2006-01-02T15:04:05Z0700"
 
 var logger = log.New(os.Stderr, "", log.Lshortfile|log.LstdFlags)
 
@@ -26,6 +27,8 @@ func FloatAsDateTime(timestamp float64, format string) (formatted string) {
 		formatted = unixTime.Format(shortDateFormat)
 	case "shortTime":
 		formatted = unixTime.Format(shortTimeFormat)
+	case "iso8601DateTime":
+		formatted = unixTime.Format(iso8601DateTimeFormat)
 	default:
 		formatted = unixTime.Format(longDateTimeFormat)
 	}

@@ -8,7 +8,7 @@ var WILLUS = (function (my) {
   my.dailyPrecipitationHeight = 100;
   my.dailyTemperatureWidth = 800;
   my.dailyTemperatureHeight = 300;
-  my.minimumPrecipIntensityMax = 0.1;
+  my.minimumPrecipIntensityMax = 0.35;
 
   my.uniq = function(array) {
     return array.filter(function (value, index, array) {
@@ -48,42 +48,51 @@ var WILLUS = (function (my) {
   }
 
   my.makePrecipChart = function (selector, data, width, height) {
-    var barWidth = width / data.length;
+    var margin = {top: 0, right: 0, bottom: 0, left: 50},
+        interiorWidth = width - margin.left - margin.right,
+        interiorHeight = height - margin.top - margin.bottom,
+        barWidth = width / data.length;
     var maxPrecip = Math.max(
       d3.max(data, function(d) { return d[0]; }), my.minimumPrecipIntensityMax
     );
-    var y = d3.scale.linear().
-        range([0, height / maxPrecip]);
+    var x = d3.time.scale().range([0, interiorWidth]);
+    var y = d3.scale.linear().range([interiorHeight, 0]).domain([0, maxPrecip]);
+    var xAxis = d3.svg.axis().
+      scale(x).
+      orient("bottom");
+    var yAxis = d3.svg.axis().
+        scale(y).
+        orient("left").
+        ticks(3);
 
-    d3.select(selector + ' .y-axis').style('height', height + "px");
-    d3.select(selector + ' .y-axis .top').
-        text(my.precipIntensityLabel(maxPrecip));
-    d3.select(selector + ' .y-axis .bottom').
-        text(my.precipIntensityLabel(
-          d3.min(data, function(d) { return d[0] })
-        ));
+    var chart = d3.select(selector + ' .area').
+      append("svg").
+        style("width", width).
+        style("height", height).
+      append("g").
+        attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    return d3.select(selector + ' .area').
-      style('width', width + "px").
-      style('height', height + "px").
-      selectAll("div").
-        data(data).
-      enter().append("div").
-        classed('bar', true).
-        style("height", function(d) {
-          return y(d[0]) + "px";
-        }).
-        style("width", barWidth + "px").
-        style('left', function(d, i) { return ((i * barWidth) + "px"); }).
-        style('opacity', function(d) { return d[1]; }).
-        attr('title', function(d) { return "" + d[0] + " (" + d[1] + ")"; });
+    chart.append("g").
+      attr("class", "y axis").
+      call(yAxis);
+
+    chart.selectAll(".bar").
+      data(data).
+      enter().append("rect").
+        attr("class", "bar").
+        attr("x", function(d, i) { return i * barWidth; }).
+        attr("y", function(d) { return y(d[0]); }).
+        attr("height", function(d) { return interiorHeight - y(d[0]); }).
+        attr("width", barWidth).
+        attr("opacity", function(d) { return d[1]; }).
+        attr("title", function(d) { return "" + d[0] + '" (' + d[1] + "%)"; });
   };
 
   my.makeTempChart = function (selector, data, width, height) {
     var margin = {top: 0, right: 0, bottom: 30, left: 50},
-        tempMarginDegrees = 2,
         interiorWidth = width - margin.left - margin.right,
         interiorHeight = height - margin.top - margin.bottom,
+        tempMarginDegrees = 2,
         dates = my.uniq(data.map(
           function(d) { return my.roundTimeTo(new Date(d[0].getTime()), 12); }
         ));
@@ -95,7 +104,8 @@ var WILLUS = (function (my) {
         tickValues(dates).
         tickFormat(d3.time.format("%-m/%d"));
     var yAxis = d3.svg.axis().scale(y).
-        orient("left").ticks(3).
+        orient("left").
+        ticks(3).
         tickFormat(function(d) { return "" + d + "\xB0"; });
     var valueline = d3.svg.line().
         interpolate("monotone").

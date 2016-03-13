@@ -85,21 +85,20 @@ h2, .minutely, .hourly, .daily {
   bottom: 0;
 }
 
-.precipitation-chart {
-  margin-left: 40px;
-}
-.precipitation-chart .bar {
-  font: 10px sans-serif;
-  background-color: #4682B4;
-  position: absolute;
-  bottom: 0;
-}
-
 .temperature-chart canvas {
   border: solid 1px green;
 }
 
 /** SVG styling **/
+
+.precipitation-chart .bar {
+  fill: #4682B4;
+}
+
+.precipitation-chart .domain {
+  fill: none;
+  stroke: black;
+}
 
 .temperature-chart .line {
   fill: none;

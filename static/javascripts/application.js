@@ -1,14 +1,14 @@
 var WILLUS = (function (my) {
 
   my.minutelyWidth = 200;
-  my.minutelyHeight = 100;
+  my.minutelyHeight = 120;
   my.hourlyWidth = 400;
-  my.hourlyHeight = 100;
+  my.hourlyHeight = 120;
   my.dailyPrecipitationWidth = 760;
-  my.dailyPrecipitationHeight = 100;
+  my.dailyPrecipitationHeight = 120;
   my.dailyTemperatureWidth = 800;
   my.dailyTemperatureHeight = 300;
-  my.minimumPrecipIntensityMax = 0.35;
+  my.minimumPrecipIntensityMax = 0.4;
 
   my.uniq = function(array) {
     return array.filter(function (value, index, array) {
@@ -48,7 +48,7 @@ var WILLUS = (function (my) {
   }
 
   my.makePrecipChart = function (selector, data, width, height) {
-    var margin = {top: 0, right: 0, bottom: 0, left: 50},
+    var margin = {top: 10, right: 0, bottom: 10, left: 50},
         interiorWidth = width - margin.left - margin.right,
         interiorHeight = height - margin.top - margin.bottom,
         barWidth = width / data.length;
@@ -60,10 +60,14 @@ var WILLUS = (function (my) {
     var xAxis = d3.svg.axis().
       scale(x).
       orient("bottom");
+    var xAxis = d3.svg.axis().scale(x).
+        orient("bottom").
+        ticks(0);
     var yAxis = d3.svg.axis().
         scale(y).
         orient("left").
         ticks(3);
+        // tickFormat(my.precipIntensityLabel);
 
     var chart = d3.select(selector + ' .area').
       append("svg").
@@ -71,6 +75,11 @@ var WILLUS = (function (my) {
         style("height", height).
       append("g").
         attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    chart.append("g").
+      attr("class", "x axis").
+      attr("transform", "translate(0," + interiorHeight + ")").
+      call(xAxis);
 
     chart.append("g").
       attr("class", "y axis").
@@ -96,7 +105,6 @@ var WILLUS = (function (my) {
         dates = my.uniq(data.map(
           function(d) { return my.roundTimeTo(new Date(d[0].getTime()), 12); }
         ));
-;
     var x = d3.time.scale().range([0, interiorWidth]);
     var y = d3.scale.linear().range([interiorHeight, 0]);
     var xAxis = d3.svg.axis().scale(x).

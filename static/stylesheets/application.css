@@ -91,6 +91,11 @@ h2, .minutely, .hourly, .daily {
 
 /** SVG styling **/
 
+
+.precipitation-chart .axis.y {
+  font-size: 12px;
+}
+
 .precipitation-chart .bar {
   fill: #4682B4;
 }

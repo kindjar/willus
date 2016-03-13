@@ -1,9 +1,9 @@
 var WILLUS = (function (my) {
 
   my.minutelyWidth = 200;
-  my.minutelyHeight = 50;
+  my.minutelyHeight = 100;
   my.hourlyWidth = 400;
-  my.hourlyHeight = 50;
+  my.hourlyHeight = 100;
   my.dailyPrecipitationWidth = 760;
   my.dailyPrecipitationHeight = 100;
   my.dailyTemperatureWidth = 800;
@@ -42,16 +42,19 @@ var WILLUS = (function (my) {
 
   my.makePrecipChart = function (selector, data, width, height) {
     var barWidth = width / data.length;
+    var maxPrecip = Math.max(
+      d3.max(data, function(d) { return d[0]; }), my.minimumPrecipIntensityMax
+    );
     var y = d3.scale.linear()
-        .range([0, height / d3.max(data, function(d) { return d[0]; })]);
+        .range([0, height / maxPrecip]);
 
     d3.select(selector + ' .y-axis').style('height', height + "px");
     d3.select(selector + ' .y-axis .top').
-        text(my.precipIntensityLabel(
-            d3.max(data, function(d) { return d[0] })));
+        text(my.precipIntensityLabel(maxPrecip));
     d3.select(selector + ' .y-axis .bottom').
         text(my.precipIntensityLabel(
-            d3.min(data, function(d) { return d[0] })));
+          d3.min(data, function(d) { return d[0] })
+        ));
 
     return d3.select(selector + ' .area').
       style('width', width + "px").

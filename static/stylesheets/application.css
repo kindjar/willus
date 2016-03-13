@@ -90,7 +90,7 @@ h2, .minutely, .hourly, .daily {
 }
 .precipitation-chart .bar {
   font: 10px sans-serif;
-  background-color: steelblue;
+  background-color: #4682B4;
   position: absolute;
   bottom: 0;
 }

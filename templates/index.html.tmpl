@@ -66,9 +66,10 @@
     </div>
     <script type="text/javascript">
       var dailyTemperatureData = [
-        {{range .Daily.Data}}[WILLUS.asTempMinTime("{{FloatAsDateTime .TemperatureMinTime "iso8601DateTime"}}"), {{.TemperatureMin}}], [WILLUS.asTempMaxTime("{{FloatAsDateTime .TemperatureMaxTime "iso8601DateTime"}}"), {{.TemperatureMax}}],
+        {{range .Daily.Data}}[WILLUS.parseDate("{{FloatAsDateTime .TemperatureMinTime "iso8601DateTime"}}"), {{.TemperatureMin}}], [WILLUS.parseDate("{{FloatAsDateTime .TemperatureMaxTime "iso8601DateTime"}}"), {{.TemperatureMax}}],
         {{end}}
-      ];
+      ]. /* Sort by timestamp, since sometimes the low for a day is later than the high */
+      sort(function(a, b) { return a[0].getTime() - b[0].getTime(); });
       var dailyTempChart = WILLUS.makeTempChart(
           '.temperature-chart.daily', dailyTemperatureData,
           WILLUS.dailyTemperatureWidth, WILLUS.dailyTemperatureHeight

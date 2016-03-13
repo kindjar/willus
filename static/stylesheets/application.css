@@ -98,3 +98,16 @@ h2, .minutely, .hourly, .daily {
 .temperature-chart canvas {
   border: solid 1px green;
 }
+
+/** SVG styling **/
+
+.temperature-chart .line {
+  fill: none;
+  stroke: #4682B4;
+  stroke-width: 2px;
+}
+
+.temperature-chart .domain {
+  fill: none;
+  stroke: black;
+}

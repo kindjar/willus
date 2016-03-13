@@ -8,6 +8,13 @@ var WILLUS = (function (my) {
   my.dailyPrecipitationHeight = 100;
   my.dailyTemperatureWidth = 800;
   my.dailyTemperatureHeight = 300;
+  my.minimumPrecipIntensityMax = 0.1;
+
+  my.uniq = function(array) {
+    return array.filter(function (value, index, array) {
+      return array.indexOf(value) === index;
+    });
+  }
 
   my.parseDate = d3.time.format("%Y-%m-%dT%H:%M:%S%Z").parse;
   my.roundTimeTo = function(t, h, m, s) {
@@ -74,25 +81,32 @@ var WILLUS = (function (my) {
 
   my.makeTempChart = function (selector, data, width, height) {
     var margin = {top: 0, right: 0, bottom: 30, left: 50},
+        tempMarginDegrees = 2,
         interiorWidth = width - margin.left - margin.right,
-        interiorHeight = height - margin.top - margin.bottom;
+        interiorHeight = height - margin.top - margin.bottom,
+        dates = my.uniq(data.map(
+          function(d) { return my.roundTimeTo(new Date(d[0].getTime()), 12); }
+        ));
+;
     var x = d3.time.scale().range([0, interiorWidth]);
     var y = d3.scale.linear().range([interiorHeight, 0]);
     var xAxis = d3.svg.axis().scale(x).
         orient("bottom").ticks(data.length / 2).
+        tickValues(dates).
         tickFormat(d3.time.format("%-m/%d"));
     var yAxis = d3.svg.axis().scale(y).
-        orient("left").ticks(3);
+        orient("left").ticks(3).
+        tickFormat(function(d) { return "" + d + "\xB0"; });
     var valueline = d3.svg.line().
-        interpolate("basis").
+        interpolate("monotone").
         x(function(d) { return x(d[0]); }).
         y(function(d) { return y(d[1]); });
 
     // Scale the range of the data
     x.domain(d3.extent(data, function(d) { return d[0]; }));
     y.domain([
-      d3.min(data, function(d) { return d[1]; }),
-      d3.max(data, function(d) { return d[1]; })
+      d3.min(data, function(d) { return d[1]; }) - tempMarginDegrees,
+      d3.max(data, function(d) { return d[1]; }) + tempMarginDegrees
     ]);
 
     var svg = d3.select(selector + ' .area')

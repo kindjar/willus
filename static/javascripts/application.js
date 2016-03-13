@@ -52,8 +52,8 @@ var WILLUS = (function (my) {
     var maxPrecip = Math.max(
       d3.max(data, function(d) { return d[0]; }), my.minimumPrecipIntensityMax
     );
-    var y = d3.scale.linear()
-        .range([0, height / maxPrecip]);
+    var y = d3.scale.linear().
+        range([0, height / maxPrecip]);
 
     d3.select(selector + ' .y-axis').style('height', height + "px");
     d3.select(selector + ' .y-axis .top').
@@ -109,29 +109,29 @@ var WILLUS = (function (my) {
       d3.max(data, function(d) { return d[1]; }) + tempMarginDegrees
     ]);
 
-    var svg = d3.select(selector + ' .area')
-        .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-        .append("g")
-            .attr("transform",
+    var svg = d3.select(selector + ' .area').
+        append("svg").
+            attr("width", width).
+            attr("height", height).
+        append("g").
+            attr("transform",
                   "translate(" + margin.left + "," + margin.top + ")");
 
     // Add the valueline path.
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", valueline(data));
+    svg.append("path").
+        attr("class", "line").
+        attr("d", valueline(data));
 
     // Add the X Axis
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + interiorHeight + ")")
-        .call(xAxis);
+    svg.append("g").
+        attr("class", "x axis").
+        attr("transform", "translate(0," + interiorHeight + ")").
+        call(xAxis);
 
     // Add the Y Axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
+    svg.append("g").
+        attr("class", "y axis").
+        call(yAxis);
     return svg;
   }
 

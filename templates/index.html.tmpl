@@ -14,25 +14,8 @@
     <div class="details">
       <div class="icon">{{.Currently.Icon}}</div>
     </div>
-    <h2>Minutely</h2>
-    <div class="minutely">
-      {{range .Minutely.Data}}
-        <div class="minute">
-          <h3 class="time">{{FloatAsDateTime .Time "shortTime"}}</h3>
-          {{template "_datapoint.html.tmpl" .}}
-        </div>
-      {{end}}
-    </div>
-    <h2>Hourly</h2>
-    <div class="hourly">
-      {{range .Hourly.Data}}
-        <div class="hour">
-          <h3 class="time">{{FloatAsDateTime .Time "shortTime"}}</h3>
-          {{template "_datapoint.html.tmpl" .}}
-        </div>
-      {{end}}
-    </div>
 
+    <h2>Hourly</h2>
     <div class="chart precipitation-chart hourly">
       <div class="area"></div>
     </div>
@@ -48,15 +31,6 @@
     </script>
 
     <h2>Daily</h2>
-    <div class="daily">
-      {{range .Daily.Data}}
-        <div class="day">
-          <h3 class="time">{{FloatAsDateTime .Time "shortDate"}}</h3>
-          {{template "_datapoint.html.tmpl" .}}
-        </div>
-      {{end}}
-    </div>
-
     <div class="chart temperature-chart daily">
       <div class="area"></div>
     </div>
@@ -85,6 +59,35 @@
           WILLUS.dailyPrecipitationWidth, WILLUS.dailyPrecipitationHeight
       );
     </script>
+
+    <h2>Minutely</h2>
+    <div class="minutely">
+      {{range .Minutely.Data}}
+        <div class="minute">
+          <h3 class="time">{{FloatAsDateTime .Time "shortTime"}}</h3>
+          {{template "_datapoint.html.tmpl" .}}
+        </div>
+      {{end}}
+    </div>
+    <h2>Hourly</h2>
+    <div class="hourly">
+      {{range .Hourly.Data}}
+        <div class="hour">
+          <h3 class="time">{{FloatAsDateTime .Time "shortTime"}}</h3>
+          {{template "_datapoint.html.tmpl" .}}
+        </div>
+      {{end}}
+    </div>
+
+    <h2>Daily</h2>
+    <div class="daily">
+      {{range .Daily.Data}}
+        <div class="day">
+          <h3 class="time">{{FloatAsDateTime .Time "shortDate"}}</h3>
+          {{template "_datapoint.html.tmpl" .}}
+        </div>
+      {{end}}
+    </div>
 
     {{if .Alerts}}
       <h2>Alerts</h2>

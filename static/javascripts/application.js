@@ -1,12 +1,12 @@
 var WILLUS = (function (my) {
 
   my.minutelyWidth = 200;
-  my.minutelyHeight = 120;
+  my.minutelyHeight = 150;
   my.hourlyWidth = 400;
-  my.hourlyHeight = 120;
+  my.hourlyHeight = 150;
   my.dailyPrecipitationWidth = 760;
-  my.dailyPrecipitationHeight = 120;
-  my.dailyTemperatureWidth = 800;
+  my.dailyPrecipitationHeight = 150;
+  my.dailyTemperatureWidth = 760;
   my.dailyTemperatureHeight = 300;
   my.minimumPrecipIntensityMax = 0.4;
 

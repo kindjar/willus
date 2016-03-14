@@ -2,7 +2,7 @@ var WILLUS = (function (my) {
 
   my.minutelyWidth = 200;
   my.minutelyHeight = 150;
-  my.hourlyWidth = 400;
+  my.hourlyWidth = 760;
   my.hourlyHeight = 150;
   my.dailyPrecipitationWidth = 760;
   my.dailyPrecipitationHeight = 150;

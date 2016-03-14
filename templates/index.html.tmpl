@@ -21,12 +21,13 @@
     </div>
     <script type="text/javascript">
       var hourlyPrecipitationData = [
-        {{range .Hourly.Data}}[{{.PrecipIntensity}}, {{.PrecipProbability}}],
+        {{range .Hourly.Data}}[WILLUS.parseDate("{{FloatAsDateTime .Time "iso8601DateTime"}}"), {{.PrecipIntensity}}, {{.PrecipProbability}}],
         {{end}}
       ];
       var hourlyPrecipitationChart = WILLUS.makePrecipChart(
           '.precipitation-chart.hourly', hourlyPrecipitationData,
-          WILLUS.hourlyWidth, WILLUS.hourlyHeight
+          WILLUS.hourlyWidth, WILLUS.hourlyHeight,
+          { timeFormat: "%-I%p", xLabelPeriod: 6 }
       );
     </script>
 
@@ -51,7 +52,7 @@
     </div>
     <script type="text/javascript">
       var dailyPrecipitationData = [
-        {{range .Daily.Data}}[{{.PrecipIntensity}}, {{.PrecipProbability}}],
+        {{range .Daily.Data}}[WILLUS.parseDate("{{FloatAsDateTime .Time "iso8601DateTime"}}"), {{.PrecipIntensity}}, {{.PrecipProbability}}],
         {{end}}
       ];
       var dailyPrecipitationChart = WILLUS.makePrecipChart(

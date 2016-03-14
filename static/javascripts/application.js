@@ -47,27 +47,39 @@ var WILLUS = (function (my) {
     return label;
   }
 
-  my.makePrecipChart = function (selector, data, width, height) {
-    var margin = {top: 10, right: 0, bottom: 10, left: 50},
+  my.makePrecipChart = function (selector, data, width, height, opts = {}) {
+    var margin = {top: 10, right: 0, bottom: 25, left: 50},
         interiorWidth = width - margin.left - margin.right,
         interiorHeight = height - margin.top - margin.bottom,
-        barWidth = width / data.length;
+        dates = my.uniq(data.map(
+          function(d) { return d[0]; }
+        ));
     var maxPrecip = Math.max(
-      d3.max(data, function(d) { return d[0]; }), my.minimumPrecipIntensityMax
+      d3.max(data, function(d) { return d[1]; }), my.minimumPrecipIntensityMax
     );
-    var x = d3.time.scale().range([0, interiorWidth]);
+    var timeFormatter = d3.time.format(opts['timeFormat'] || "%-m/%d");
+    // var x = d3.time.scale().range([0, interiorWidth]);
+    var x = d3.scale.ordinal().
+      domain(data.map(function(d) { return d[0]; })).
+      rangeRoundBands([0, interiorWidth], 0.1);
     var y = d3.scale.linear().range([interiorHeight, 0]).domain([0, maxPrecip]);
-    var xAxis = d3.svg.axis().
-      scale(x).
-      orient("bottom");
     var xAxis = d3.svg.axis().scale(x).
         orient("bottom").
-        ticks(0);
-    var yAxis = d3.svg.axis().
-        scale(y).
+        tickFormat(timeFormatter);
+
+    if (opts['xLabelPeriod']) {
+      var remainder = Math.floor(opts['xLabelPeriod'] / 2);
+      xAxis.tickValues(dates.filter(function(v,i,a) {
+        return i % opts['xLabelPeriod'] == remainder;
+      }));
+    } else {
+      xAxis.tickValues(dates);
+    }
+
+    var yAxis = d3.svg.axis().scale(y).
         orient("left").
+        // tickFormat(my.precipIntensityLabel).
         ticks(3);
-        // tickFormat(my.precipIntensityLabel);
 
     var chart = d3.select(selector + ' .area').
       append("svg").

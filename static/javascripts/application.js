@@ -101,12 +101,12 @@ var WILLUS = (function (my) {
       data(data).
       enter().append("rect").
         attr("class", "bar").
-        attr("x", function(d, i) { return i * barWidth; }).
-        attr("y", function(d) { return y(d[0]); }).
-        attr("height", function(d) { return interiorHeight - y(d[0]); }).
-        attr("width", barWidth).
-        attr("opacity", function(d) { return d[1]; }).
-        attr("title", function(d) { return "" + d[0] + '" (' + d[1] + "%)"; });
+        attr("x", function(d, i) { return x(d[0]); }).
+        attr("y", function(d) { return y(d[1]); }).
+        attr("height", function(d) { return interiorHeight - y(d[1]); }).
+        attr("width", x.rangeBand()).
+        attr("opacity", function(d) { return d[2]; }).
+        attr("title", function(d) { return "" + d[1] + '" (' + d[2] + "%)"; });
   };
 
   my.makeTempChart = function (selector, data, width, height) {
@@ -120,12 +120,12 @@ var WILLUS = (function (my) {
     var x = d3.time.scale().range([0, interiorWidth]);
     var y = d3.scale.linear().range([interiorHeight, 0]);
     var xAxis = d3.svg.axis().scale(x).
-        orient("bottom").ticks(data.length / 2).
+        orient("bottom").
+        ticks(dates.length).
         tickValues(dates).
         tickFormat(d3.time.format("%-m/%d"));
     var yAxis = d3.svg.axis().scale(y).
         orient("left").
-        ticks(3).
         tickFormat(function(d) { return "" + d + "\xB0"; });
     var valueline = d3.svg.line().
         interpolate("monotone").
@@ -140,12 +140,11 @@ var WILLUS = (function (my) {
     ]);
 
     var svg = d3.select(selector + ' .area').
-        append("svg").
-            attr("width", width).
-            attr("height", height).
-        append("g").
-            attr("transform",
-                  "translate(" + margin.left + "," + margin.top + ")");
+      append("svg").
+        attr("width", width).
+        attr("height", height).
+      append("g").
+        attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // Add the valueline path.
     svg.append("path").

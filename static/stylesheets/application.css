@@ -92,8 +92,8 @@ h2, .minutely, .hourly, .daily {
 /** SVG styling **/
 
 
-.precipitation-chart .axis.y {
-  font-size: 12px;
+.precipitation-chart .axis, .temperature-chart .axis {
+  font-size: 14px;
 }
 
 .precipitation-chart .bar {
